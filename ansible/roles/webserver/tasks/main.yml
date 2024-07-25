@@ -1,0 +1,35 @@
+- name: Install NGINX
+  apt:
+    name: nginx
+    state: present
+
+- name: Copy NGINX configuration
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Deploy index.html
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+
+- name: Start NGINX
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Install Certbot
+  apt:
+    name: certbot
+    state: present
+
+- name: Obtain SSL certificates
+  shell: certbot certonly --nginx -d example.com --non-interactive --agree-tos --email your-email@example.com
+
+- name: Restart NGINX
+  service:
+    name: nginx
+    state: restarted
+
+
