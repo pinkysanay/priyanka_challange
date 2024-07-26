@@ -1,68 +1,32 @@
-import re
 def is_valid_credit_card(card_number):
+    # Remove hyphens and check the basic format
+    clean_number = card_number.replace('-', '')
+    
+    # Check if it contains exactly 16 digits
+    if len(clean_number) != 16 or not clean_number.isdigit():
+        return False
+    
+    # Check if it starts with 4, 5, or 6
+    if clean_number[0] not in '456':
+        return False
+    
+    # Check for valid grouping if hyphens are present
+    if '-' in card_number:
+        parts = card_number.split('-')
+        if len(parts) != 4 or any(len(part) != 4 for part in parts):
+            return False
+    
+    # Check for 4 or more consecutive repeated digits
+    for i in range(13):
+        if clean_number[i] == clean_number[i+1] == clean_number[i+2] == clean_number[i+3]:
+            return False
+    
+    return True
 
-    # Regex pattern to check the validity of the credit card number
+# Read input
+n = int(input().strip())
+credit_cards = [input().strip() for _ in range(n)]
 
-    pattern = re.compile(r'^[456]\d{3}(-?\d{4}){3}$')
-
-    # Regex pattern to check for consecutive repeated digits
-
-    consecutive_repeats_pattern = re.compile(r'(\d)\1{3,}')
-
-    # Remove all hyphens from the card number for the consecutive digit check
-
-    card_number_without_hyphens = card_number.replace('-', '')
-
-    # Check if the card number matches the basic pattern and has no consecutive repeated digits
-
-    if pattern.match(card_number) and not consecutive_repeats_pattern.search(card_number_without_hyphens):
-
-        return 'Valid'
-
-    else:
-
-        return 'Invalid'
-
-
-
-def validate_credit_cards(n, card_numbers):
-
-    results = []
-
-    for card_number in card_numbers:
-
-        results.append(is_valid_credit_card(card_number))
-
-    return results
-
-
-
-# Sample Input
-
-n = 6
-
-card_numbers = [
-
-    "4123456789123456",
-
-    "5123-4567-8912-3456",
-
-    "61234-567-8912-3456",
-
-    "4123356789123456",
-
-    "5133-3367-8912-3456",
-
-    "5123 - 3567 - 8912 - 3456"
-
-]
-
-
-
-# Validate the sample input
-
-results = validate_credit_cards(n, card_numbers)
-
-for result in results:
-
-    print(result)
+# Validate each credit card number and print the result
+for card in credit_cards:
+    print('Valid' if is_valid_credit_card(card) else 'Invalid')
